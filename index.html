@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="google-adsense-account" content="ca-pub-3276417360557292">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Converter & AdSense Ready</title>
+
+    <!-- !!! IMPORTANT: PASTE YOUR UNIQUE ADSENSE META TAG HERE !!! -->
+    <!-- The tag will look like this, but with your unique code: -->
+    <!-- <meta name="google-adsense-account" content="ca-pub-1234567890123456"> -->
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+        .converter-card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .ad-placeholder {
+            min-height: 100px;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #9ca3af;
+        }
+        .tab-button.active {
+            border-bottom: 3px solid #10b981; /* Emerald green */
+            color: #10b981;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col items-center">
+
+    <!-- Header and Ad Banner (Top) -->
+    <div class="w-full max-w-xl mb-6">
+        <div class="ad-placeholder w-full rounded-lg mb-4 p-4">
+            AdSense Top Banner Ad Unit (728x90 / Responsive)
+        </div>
+    </div>
+
+    <!-- Main Converter Card -->
+    <div id="converterApp" class="converter-card bg-white p-6 md:p-8 rounded-xl w-full max-w-xl">
+        
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-4 text-center">
+            Universal Converter
+        </h1>
+
+        <!-- Tab Navigation -->
+        <div class="flex border-b border-gray-200 mb-6">
+            <button id="tab-temp" class="tab-button active flex-1 py-3 text-center text-gray-600 transition duration-150 ease-in-out hover:text-gray-800" onclick="switchTab('temperature')">
+                Temperature
+            </button>
+            <button id="tab-currency" class="tab-button flex-1 py-3 text-center text-gray-600 transition duration-150 ease-in-out hover:text-gray-800" onclick="switchTab('currency')">
+                Currency
+            </button>
+        </div>
+        
+        <!-- Tab Content: Temperature Converter -->
+        <div id="temperature-content" class="tab-content">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Temperature Conversion</h2>
+
+            <div class="mb-4">
+                <label for="tempInput" class="block text-sm font-medium text-gray-700 mb-1">Enter Temperature Value</label>
+                <input type="number" id="tempInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition duration-150" placeholder="e.g., 32" oninput="convertTemperature()">
+            </div>
+
+            <div class="mb-4">
+                <label for="tempUnit" class="block text-sm font-medium text-gray-700 mb-1">Select Unit</label>
+                <select id="tempUnit" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 appearance-none bg-white transition duration-150" onchange="convertTemperature()">
+                    <option value="C">Celsius (°C)</option>
+                    <option value="F">Fahrenheit (°F)</option>
+                    <option value="K">Kelvin (K)</option>
+                </select>
+            </div>
+
+            <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                <p class="text-sm font-semibold text-emerald-700 mb-2">Results:</p>
+                <p id="resultC" class="text-gray-800">Celsius: <span class="font-mono">--</span></p>
+                <p id="resultF" class="text-gray-800">Fahrenheit: <span class="font-mono">--</span></p>
+                <p id="resultK" class="text-gray-800">Kelvin: <span class="font-mono">--</span></p>
+            </div>
+            <p id="tempError" class="text-red-500 text-sm mt-2 hidden">Please enter a valid number.</p>
+        </div>
+
+        <!-- Tab Content: Currency Converter -->
+        <div id="currency-content" class="tab-content hidden">
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Currency Conversion</h2>
+            <p class="text-sm text-yellow-700 bg-yellow-100 p-2 rounded-lg mb-4">
+                Using **static, non-live rates** for stability in this environment.
+            </p>
+            
+            <div class="mb-4">
+                <label for="currencyAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                <input type="number" id="currencyAmount" value="1.00" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition duration-150" oninput="convertCurrency()">
+            </div>
+
+            <div class="flex space-x-4 mb-4">
+                <div class="flex-1">
+                    <label for="currencyFrom" class="block text-sm font-medium text-gray-700 mb-1">From</label>
+                    <select id="currencyFrom" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 appearance-none bg-white transition duration-150" onchange="convertCurrency()">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label for="currencyTo" class="block text-sm font-medium text-gray-700 mb-1">To</label>
+                    <select id="currencyTo" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 appearance-none bg-white transition duration-150" onchange="convertCurrency()">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                <p class="text-sm font-semibold text-emerald-700 mb-2">Converted Result:</p>
+                <p id="currencyResult" class="text-gray-800 text-xl font-bold">--</p>
+                <p id="rateInfo" class="text-sm text-gray-600 mt-2 italic">Rate: 1 <span id="infoFrom"></span> = <span id="infoRate">--</span> <span id="infoTo"></span></p>
+            </div>
+            <p id="currencyError" class="text-red-500 text-sm mt-2 hidden">Please enter a valid amount.</p>
+        </div>
+
+    </div>
+
+    <!-- Ad Banner (Bottom) -->
+    <div class="w-full max-w-xl mt-6">
+        <div class="ad-placeholder w-full rounded-lg p-4">
+            AdSense Bottom Rectangle Ad Unit (300x250 / Responsive)
+        </div>
+    </div>
+
+    <script>
+        // --- Shared Application State ---
+        let currentTab = 'temperature';
+        let exchangeRates = {}; // Store fetched rates, base is USD
+
+        // Static rates (USD as base: 1 USD = X Currency)
+        const STATIC_EXCHANGE_RATES = {
+            USD: 1.0,
+            EUR: 0.92, // Euro
+            GBP: 0.80, // British Pound
+            JPY: 155.00, // Japanese Yen
+            CAD: 1.36, // Canadian Dollar
+            AUD: 1.50, // Australian Dollar
+            CHF: 0.90, // Swiss Franc
+            CNY: 7.20, // Chinese Yuan
+            INR: 83.50, // Indian Rupee
+            BRL: 5.10, // Brazilian Real
+            KRW: 1360.00 // South Korean Won
+        };
+
+        // --- Core Functions: Temperature Converter ---
+
+        function convertTemperature() {
+            const input = document.getElementById('tempInput').value;
+            const unit = document.getElementById('tempUnit').value;
+            const errorElement = document.getElementById('tempError');
+            
+            const value = parseFloat(input);
+            if (isNaN(value)) {
+                document.getElementById('resultC').querySelector('span').textContent = '--';
+                document.getElementById('resultF').querySelector('span').textContent = '--';
+                document.getElementById('resultK').querySelector('span').textContent = '--';
+                errorElement.classList.remove('hidden');
+                return;
+            }
+            errorElement.classList.add('hidden');
+
+            let C, F, K;
+
+            if (unit === 'C') {
+                C = value;
+                F = (C * 9/5) + 32;
+                K = C + 273.15;
+            } else if (unit === 'F') {
+                F = value;
+                C = (F - 32) * 5/9;
+                K = C + 273.15;
+            } else if (unit === 'K') {
+                K = value;
+                C = K - 273.15;
+                F = (C * 9/5) + 32;
+            }
+
+            document.getElementById('resultC').querySelector('span').textContent = C.toFixed(2) + ' °C';
+            document.getElementById('resultF').querySelector('span').textContent = F.toFixed(2) + ' °F';
+            document.getElementById('resultK').querySelector('span').textContent = K.toFixed(2) + ' K';
+        }
+
+        // --- Core Functions: Currency Converter ---
+
+        /**
+         * Loads static rates and initializes the currency converter.
+         */
+        function loadStaticRates() {
+            exchangeRates = STATIC_EXCHANGE_RATES;
+            populateCurrencySelects(exchangeRates);
+            convertCurrency();
+        }
+
+        /**
+         * Converts currency based on the current UI state and static rates.
+         */
+        function convertCurrency() {
+            const amountInput = document.getElementById('currencyAmount');
+            const fromSelect = document.getElementById('currencyFrom');
+            const toSelect = document.getElementById('currencyTo');
+            const resultElement = document.getElementById('currencyResult');
+            const rateInfoElement = document.getElementById('rateInfo');
+            const errorElement = document.getElementById('currencyError');
+
+            const amount = parseFloat(amountInput.value);
+            const from = fromSelect.value;
+            const to = toSelect.value;
+            
+            if (isNaN(amount) || amount < 0) {
+                resultElement.textContent = '--';
+                rateInfoElement.classList.add('hidden');
+                errorElement.classList.remove('hidden');
+                return;
+            }
+            errorElement.classList.add('hidden');
+            rateInfoElement.classList.remove('hidden');
+
+            if (!exchangeRates[from] || !exchangeRates[to]) {
+                resultElement.textContent = 'Rates unavailable.';
+                return;
+            }
+
+            // 1. Convert "From" amount to the base currency (USD)
+            // Divide by the rate to USD to get the value in USD
+            const usdAmount = amount / exchangeRates[from];
+
+            // 2. Convert USD amount to the "To" currency
+            // Multiply by the rate from USD to the target currency
+            const finalAmount = usdAmount * exchangeRates[to];
+            
+            // Calculate the direct exchange rate for info display
+            const directRate = exchangeRates[to] / exchangeRates[from];
+
+
+            resultElement.textContent = `${finalAmount.toFixed(2)} ${to}`;
+            
+            // Update rate info
+            document.getElementById('infoFrom').textContent = from;
+            document.getElementById('infoRate').textContent = directRate.toFixed(4);
+            document.getElementById('infoTo').textContent = to;
+        }
+
+        /**
+         * Populates the 'From' and 'To' currency select boxes.
+         */
+        function populateCurrencySelects(rates) {
+            const fromSelect = document.getElementById('currencyFrom');
+            const toSelect = document.getElementById('currencyTo');
+            
+            // Clear existing options
+            fromSelect.innerHTML = '';
+            toSelect.innerHTML = '';
+
+            const currencyCodes = Object.keys(rates).sort();
+            
+            currencyCodes.forEach(code => {
+                const optionFrom = new Option(code, code);
+                const optionTo = new Option(code, code);
+                
+                fromSelect.add(optionFrom);
+                toSelect.add(optionTo);
+            });
+            
+            // Set defaults: USD to EUR
+            fromSelect.value = 'USD';
+            toSelect.value = 'EUR';
+        }
+
+
+        // --- UI Control Functions ---
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            const contents = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-button');
+
+            contents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(`${tabId}-content`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId === 'temperature' ? 'temp' : 'currency'}`).classList.add('active');
+
+            // If switching to currency for the first time, load rates
+            if (tabId === 'currency' && Object.keys(exchangeRates).length === 0) {
+                loadStaticRates();
+            }
+        }
+
+        // --- Initialization ---
+
+        window.onload = function() {
+            // Initialize temperature conversion on load
+            convertTemperature();
+            
+            // If currency tab is the default or loaded first, load rates
+            if (currentTab === 'currency') {
+                loadStaticRates();
+            }
+        };
+    </script>
+
+</body>
+</html>
+
